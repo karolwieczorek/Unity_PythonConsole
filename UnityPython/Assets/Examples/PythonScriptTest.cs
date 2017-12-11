@@ -6,10 +6,9 @@ using UnityEngine.UI;
 using System;
 
 namespace UnityPython.Assets.Examples {
+    // doit rename to PythonManager
     public class PythonScriptTest : MonoBehaviour {
-
-        [SerializeField] InputField inputField;
-        [SerializeField] Button button;
+        [SerializeField] PyConsole pyConsole;
 
         Microsoft.Scripting.Hosting.ScriptEngine engine;
         Microsoft.Scripting.Hosting.ScriptScope scope;
@@ -17,15 +16,11 @@ namespace UnityPython.Assets.Examples {
         string pythonScript;
         private void Awake() {
             pythonScript = GetText();
-            button.onClick.AddListener(ButtonClick);
+            pyConsole.SetExecuteAction(ExecuteInputCommand);
         }
 
-        private void ButtonClick() {
-            ExecuteInputCommand();
-        }
-
-        private void ExecuteInputCommand() {
-            engine.Execute(inputField.text, scope);
+        private void ExecuteInputCommand(string expression) {
+            engine.Execute(expression, scope);
         }
 
         private void Start() {
@@ -44,9 +39,9 @@ namespace UnityPython.Assets.Examples {
             float timeBackup = scope.GetVariable<float>("timeBackup");
             Debug.Log(timeBackup);
 
-            Debug.LogError("WTF\nwtf\nlol\nxD");
+            Debug.LogError("Error test");
 
-            Debug.LogWarning("warning\nwarning\nwarning");
+            Debug.LogWarning("warning\nTest");
 
             TestInstance();
             TestInstance();
@@ -58,15 +53,6 @@ namespace UnityPython.Assets.Examples {
 
             string variables = string.Join(",", scope.GetVariableNames().ToArray());
             Debug.Log("variables: " + variables);
-        }
-
-        private void Update() {
-            if (inputField.isFocused) {
-                if (Input.GetKeyDown(KeyCode.Return) && Input.GetKey(KeyCode.LeftShift) == false) {
-                    ExecuteInputCommand();
-                    inputField.text = "";
-                }
-            }
         }
 
         void TestInstance() {

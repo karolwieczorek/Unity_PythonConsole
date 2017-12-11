@@ -6,11 +6,15 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class PyConsole : MonoBehaviour {
-    [SerializeField] InputField input;
-    [SerializeField] Button button;
+    [SerializeField] PyInputField input;
     [SerializeField] Text consoleText;
 
     List<Log> unityLogs = new List<Log>();
+    List<Log> expressionLogs = new List<Log>();
+
+    private void Start() {
+        input.Init(this);
+    }
 
     void OnEnable() {
         Application.logMessageReceived += HandleLog;
@@ -38,16 +42,25 @@ public class PyConsole : MonoBehaviour {
             default:
                 break;
         }
-        AddUnityLog(Time.realtimeSinceStartup, condition, color);
+        AddUnityLog(condition, color);
     }
 
-    void AddUnityLog(float time, string text, Color color) {
-        Log log = new Log();
-        log.time = time;
-        log.text = text;
-        log.color = color;
+    public void SetExecuteAction(Action<string> executeInputCommand) {
+        input.SetExecuteAction(executeInputCommand);
+    }
+
+    void AddUnityLog(string text, Color color) {
+        Log log = new Log(Time.realtimeSinceStartup, text, color);
 
         unityLogs.Add(log);
+
+        DisplayLog(log);
+    }
+
+    public void AddExpressionLog(string text) {
+        Log log = new Log(Time.realtimeSinceStartup, text, Color.blue);
+
+        expressionLogs.Add(log);
 
         DisplayLog(log);
     }
@@ -58,7 +71,7 @@ public class PyConsole : MonoBehaviour {
                   .Where(x => x.Length > 0)
                   .ToList();
 
-        consoleText.text += string.Format(" {0:0.0} -> ", log.time);
+        consoleText.text += string.Format(" {0} -> ", log.GetTime());
         for (int i = 0; i < output.Count; i++) {
             if (i > 0)
                 consoleText.text += "\t\t";
@@ -72,8 +85,27 @@ internal class Log {
     public float time;
     public Color color = Color.black;
 
+    public Log(float time, string text, Color color) {
+        this.time = time;
+        this.text = text;
+        this.color = color;
+    }
+
     public string GetHexColor() {
         string hex = ColorUtility.ToHtmlStringRGBA(color);
         return "#" + hex;
+    }
+
+    public string GetTime() {
+        TimeSpan timeSpan = TimeSpan.FromSeconds(time);
+        string timeText = "";
+        if (timeSpan.Hours > 0)
+            timeText += timeSpan.Hours + ":";
+        if (timeSpan.Minutes > 0)
+            timeText += timeSpan.Minutes + ":";
+
+        timeText += timeSpan.Seconds + ":" + timeSpan.Milliseconds.ToString("00");
+
+        return timeText;
     }
 }
