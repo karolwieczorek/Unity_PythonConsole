@@ -15,3 +15,27 @@ class PyClass:
 
     def isodd(self, n):
         return 1 == n % 2
+
+
+# print hooks
+import sys
+
+class StdOutHook:
+    def write(self, text):
+        sys.__stdout__.write("stdout hook received text: %s\n" % repr(text))
+        if text != "\n" and text  != "":
+            Debug.Log(text)
+
+sys.stdout = StdOutHook()
+
+class StdErrHook:
+    def write(self, text):
+        #sys.__stderr__.write("stderr hook received text: %s\n" % repr(text))
+        if text != "\n" and text  != "":
+            Debug.LogError(text)
+
+
+sys.stderr = StdErrHook()
+
+
+print "Hello, World!"

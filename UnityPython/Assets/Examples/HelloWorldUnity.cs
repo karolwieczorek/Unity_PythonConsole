@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 
+// source: https://github.com/exodrifter/unity-python
+
 namespace Exodrifter.UnityPython.Examples
 {
 	public class HelloWorldUnity : MonoBehaviour

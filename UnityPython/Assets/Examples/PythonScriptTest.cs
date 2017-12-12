@@ -43,16 +43,16 @@ namespace UnityPython.Assets.Examples {
 
             Debug.LogWarning("warning\nTest");
 
-            TestInstance();
-            TestInstance();
+            //TestInstance();
+            //TestInstance();
 
             
             //GameObject.Find("Player").transform.GetChild(0).GetComponent("MeshRenderer").sharedMaterial.color = Color.black;
             //GameObject.Find("Player").transform.localRotation = Quaternion.Euler(0, 0, 90);
             //Camera.main.transform.position = new Vector3(2,2,-5);
 
-            string variables = string.Join(",", scope.GetVariableNames().ToArray());
-            Debug.Log("variables: " + variables);
+            //string variables = string.Join(",", scope.GetVariableNames().ToArray());
+            //Debug.Log("variables: " + variables);
         }
 
         void TestInstance() {

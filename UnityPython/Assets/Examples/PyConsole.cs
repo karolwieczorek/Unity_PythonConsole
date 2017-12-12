@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -8,6 +9,7 @@ using UnityEngine.UI;
 public class PyConsole : MonoBehaviour {
     [SerializeField] PyInputField input;
     [SerializeField] Text consoleText;
+    [SerializeField] ScrollRect scrollRect;
 
     List<Log> unityLogs = new List<Log>();
     List<Log> expressionLogs = new List<Log>();
@@ -49,7 +51,13 @@ public class PyConsole : MonoBehaviour {
         input.SetExecuteAction(executeInputCommand);
     }
 
+    internal string GetPrevCommand() {
+        return expressionLogs.Last().text;
+    }
+
     void AddUnityLog(string text, Color color) {
+        if (string.IsNullOrEmpty(text))
+            return;
         Log log = new Log(Time.realtimeSinceStartup, text, color);
 
         unityLogs.Add(log);
@@ -58,6 +66,8 @@ public class PyConsole : MonoBehaviour {
     }
 
     public void AddExpressionLog(string text) {
+        if (string.IsNullOrEmpty(text))
+            return;
         Log log = new Log(Time.realtimeSinceStartup, text, Color.blue);
 
         expressionLogs.Add(log);
@@ -65,7 +75,10 @@ public class PyConsole : MonoBehaviour {
         DisplayLog(log);
     }
 
-    void DisplayLog(Log log) {
+    void DisplayLog(Log log, bool stayBottom = true) {
+        if (stayBottom && scrollRect.normalizedPosition.y < 0.01)
+            StartCoroutine(MoveToBottom());
+
         int lenght = 200;
         var output = Regex.Split(log.text, @"(.{1," + lenght + @"})(?:\s|$)|(.{" + lenght + @"})")
                   .Where(x => x.Length > 0)
@@ -77,6 +90,16 @@ public class PyConsole : MonoBehaviour {
                 consoleText.text += "\t\t";
             consoleText.text += string.Format("<color={0}>{1}</color>\n", log.GetHexColor(), output[i]); 
         }
+    }
+
+    // doit reload
+    // join unity logs, expressions & python logs
+    // order by time
+    // foreach DisplayLog(log, false)
+
+    private IEnumerator MoveToBottom() {
+        yield return new WaitForEndOfFrame();
+        scrollRect.normalizedPosition = new Vector2(0, 0);
     }
 }
 
