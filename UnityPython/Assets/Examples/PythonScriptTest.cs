@@ -30,7 +30,7 @@ namespace UnityPython.Assets.Examples {
             engine.Runtime.LoadAssembly(typeof(Image).Assembly);
             //engine.ImportModule("");
             scope = engine.CreateScope();
-
+            scope.SetVariable("pyConsole", pyConsole);
             engine.Execute(pythonScript, scope);
             //var scope = engine.ExecuteFile(path);
             int counter = scope.GetVariable<int>("counter");

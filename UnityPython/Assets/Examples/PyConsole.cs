@@ -13,6 +13,9 @@ public class PyConsole : MonoBehaviour {
 
     List<Log> unityLogs = new List<Log>();
     List<Log> expressionLogs = new List<Log>();
+    List<Log> pythonLogs = new List<Log>();
+
+    public int maxCharsInRow = 200; 
 
     private void Start() {
         input.Init(this);
@@ -75,12 +78,22 @@ public class PyConsole : MonoBehaviour {
         DisplayLog(log);
     }
 
+    public void AddPythonLog(string text) {
+        if (string.IsNullOrEmpty(text))
+            return;
+
+        Log log = new Log(Time.realtimeSinceStartup, text, Color.green);
+
+        pythonLogs.Add(log);
+
+        DisplayLog(log);
+    }
+
     void DisplayLog(Log log, bool stayBottom = true) {
         if (stayBottom && scrollRect.normalizedPosition.y < 0.01)
             StartCoroutine(MoveToBottom());
-
-        int lenght = 200;
-        var output = Regex.Split(log.text, @"(.{1," + lenght + @"})(?:\s|$)|(.{" + lenght + @"})")
+        
+        var output = Regex.Split(log.text, @"(.{1," + maxCharsInRow + @"})(?:\s|$)|(.{" + maxCharsInRow + @"})")
                   .Where(x => x.Length > 0)
                   .ToList();
 
@@ -103,6 +116,7 @@ public class PyConsole : MonoBehaviour {
     }
 }
 
+[System.Serializable]
 internal class Log {
     public string text;
     public float time;

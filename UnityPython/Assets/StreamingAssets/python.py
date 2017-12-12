@@ -22,9 +22,9 @@ import sys
 
 class StdOutHook:
     def write(self, text):
-        sys.__stdout__.write("stdout hook received text: %s\n" % repr(text))
+        #sys.__stdout__.write("stdout hook received text: %s\n" % repr(text))
         if text != "\n" and text  != "":
-            Debug.Log(text)
+            pyConsole.AddPythonLog(text)
 
 sys.stdout = StdOutHook()
 
@@ -32,7 +32,7 @@ class StdErrHook:
     def write(self, text):
         #sys.__stderr__.write("stderr hook received text: %s\n" % repr(text))
         if text != "\n" and text  != "":
-            Debug.LogError(text)
+            pyConsole.AddPythonLog(text)
 
 
 sys.stderr = StdErrHook()
