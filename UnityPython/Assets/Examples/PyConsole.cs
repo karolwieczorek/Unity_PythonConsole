@@ -11,6 +11,10 @@ public class PyConsole : MonoBehaviour {
     [SerializeField] Text consoleText;
     [SerializeField] ScrollRect scrollRect;
 
+    [SerializeField] Toggle unityLogsToggle;
+    [SerializeField] Toggle pythonLogsToggle;
+    [SerializeField] Toggle expressionsToggle;
+
     List<Log> unityLogs = new List<Log>();
     List<Log> expressionLogs = new List<Log>();
     List<Log> pythonLogs = new List<Log>();
@@ -19,6 +23,9 @@ public class PyConsole : MonoBehaviour {
 
     private void Start() {
         input.Init(this);
+        unityLogsToggle.onValueChanged.AddListener((x) => { ReloadConsole(); });
+        pythonLogsToggle.onValueChanged.AddListener((x) => { ReloadConsole(); });
+        expressionsToggle.onValueChanged.AddListener((x) => { ReloadConsole(); });
     }
 
     void OnEnable() {
@@ -65,7 +72,8 @@ public class PyConsole : MonoBehaviour {
 
         unityLogs.Add(log);
 
-        DisplayLog(log);
+        if (unityLogsToggle.isOn)
+            DisplayLog(log);
     }
 
     public void AddExpressionLog(string text) {
@@ -75,7 +83,8 @@ public class PyConsole : MonoBehaviour {
 
         expressionLogs.Add(log);
 
-        DisplayLog(log);
+        if (expressionsToggle.isOn)
+            DisplayLog(log);
     }
 
     public void AddPythonLog(string text) {
@@ -86,7 +95,8 @@ public class PyConsole : MonoBehaviour {
 
         pythonLogs.Add(log);
 
-        DisplayLog(log);
+        if (pythonLogsToggle.isOn)
+            DisplayLog(log);
     }
 
     void DisplayLog(Log log, bool stayBottom = true) {
@@ -109,6 +119,23 @@ public class PyConsole : MonoBehaviour {
     // join unity logs, expressions & python logs
     // order by time
     // foreach DisplayLog(log, false)
+
+    void ReloadConsole() {
+        consoleText.text = "";
+
+        List<Log> logs = new List<Log>();
+        if (unityLogsToggle.isOn)
+            logs.AddRange(unityLogs);
+        if (pythonLogsToggle.isOn)
+            logs.AddRange(pythonLogs);
+        if (expressionsToggle.isOn)
+            logs.AddRange(expressionLogs);
+
+        var orderedLogs = logs.OrderBy(x => x.time).ToList();
+        foreach (var log in orderedLogs) {
+            DisplayLog(log, false);
+        }
+    }
 
     private IEnumerator MoveToBottom() {
         yield return new WaitForEndOfFrame();
