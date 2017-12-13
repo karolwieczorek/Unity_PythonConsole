@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace UnityPython.Assets.Code {
+namespace UnityPythonConsole.Assets.Code {
     public class UnityMethodsEvents : MonoBehaviour {
         public event EventHandler update;
         public event EventHandler fixedUpdate;

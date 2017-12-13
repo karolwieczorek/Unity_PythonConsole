@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System;
 
-namespace UnityPython.Assets.Code {
+namespace UnityPythonConsole.Assets.Code {
     public class PythonManager : MonoBehaviour {
         [SerializeField] PyConsole pyConsole;
         [SerializeField] UnityMethodsEvents unityMethodsEvents;
@@ -31,52 +31,8 @@ namespace UnityPython.Assets.Code {
             scope.SetVariable("pyConsole", pyConsole);
             scope.SetVariable("unityEvents", unityMethodsEvents);
             engine.Execute(pythonScript, scope);
-
-            Debug.LogError("Error test");
-
-            Debug.LogWarning("warning\nTest");
-            
-            //TestInstance();
-            //TestInstance();
-
-            
-            //GameObject.Find("Player").transform.GetChild(0).GetComponent("MeshRenderer").sharedMaterial.color = Color.black;
-            //GameObject.Find("Player").transform.localRotation = Quaternion.Euler(0, 0, 90);
-            //Camera.main.transform.position = new Vector3(2,2,-5);
-
-            //string variables = string.Join(",", scope.GetVariableNames().ToArray());
-            //Debug.Log("variables: " + variables);
         }
-
-        void TestInstance() {
-            PythonInstance py = new PythonInstance(@"
-import UnityEngine
-from UnityEngine import *
-
-class PyClass:
-    index = 1
-
-    def __init__(self):
-        pass
-
-    def somemethod(self):
-        self.index += 1
-        Camera.main.transform.position = Vector3(2,2,-5);
-        Debug.Log(""in some method"" + str(self.index))
-
-    def isodd(self, n):
-        return 1 == n % 2
-");
-
-            py.CallMethod("somemethod");
-            py.CallMethod("somemethod");
-            py.CallMethod("somemethod");
-            py.CallMethod("somemethod");
-            Debug.Log(py.CallFunction("isodd", 6));
-        }
-
-#region Web GetText
-        // doit use with web
+        
         IEnumerator GetPythonScript() {
             string filePath = System.IO.Path.Combine(Application.streamingAssetsPath, "python.py");
 
@@ -90,6 +46,5 @@ class PyClass:
 
             pythonScript = result;
         }
-#endregion
     }
 }
