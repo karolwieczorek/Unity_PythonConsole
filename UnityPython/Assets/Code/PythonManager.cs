@@ -5,9 +5,10 @@ using UnityEngine;
 using UnityEngine.UI;
 using System;
 
-namespace UnityPython.Assets.Examples {
+namespace UnityPython.Assets.Code {
     public class PythonManager : MonoBehaviour {
         [SerializeField] PyConsole pyConsole;
+        [SerializeField] UnityMethodsEvents unityMethodsEvents;
 
         Microsoft.Scripting.Hosting.ScriptEngine engine;
         Microsoft.Scripting.Hosting.ScriptScope scope;
@@ -28,6 +29,7 @@ namespace UnityPython.Assets.Examples {
 
             scope = engine.CreateScope();
             scope.SetVariable("pyConsole", pyConsole);
+            scope.SetVariable("unityEvents", unityMethodsEvents);
             engine.Execute(pythonScript, scope);
 
             Debug.LogError("Error test");

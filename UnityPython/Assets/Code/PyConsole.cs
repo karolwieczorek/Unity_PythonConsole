@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityPython.Assets.Code;
 
 public class PyConsole : MonoBehaviour {
     [SerializeField] PyInputField input;
@@ -19,13 +20,15 @@ public class PyConsole : MonoBehaviour {
     List<Log> expressionLogs = new List<Log>();
     List<Log> pythonLogs = new List<Log>();
 
-    public int maxCharsInRow = 200; 
+    public int maxCharsInRow = 200;
+    public int maxLogsInConsole = 50;
 
     private void Start() {
         input.Init(this);
         unityLogsToggle.onValueChanged.AddListener((x) => { ReloadConsole(); });
         pythonLogsToggle.onValueChanged.AddListener((x) => { ReloadConsole(); });
         expressionsToggle.onValueChanged.AddListener((x) => { ReloadConsole(); });
+        StartCoroutine(MoveToBottom());
     }
 
     void OnEnable() {
@@ -73,7 +76,7 @@ public class PyConsole : MonoBehaviour {
         unityLogs.Add(log);
 
         if (unityLogsToggle.isOn)
-            DisplayLog(log);
+            ReloadConsole();
     }
 
     public void AddExpressionLog(string text) {
@@ -84,7 +87,7 @@ public class PyConsole : MonoBehaviour {
         expressionLogs.Add(log);
 
         if (expressionsToggle.isOn)
-            DisplayLog(log);
+            ReloadConsole();
     }
 
     public void AddPythonLog(string text) {
@@ -96,13 +99,10 @@ public class PyConsole : MonoBehaviour {
         pythonLogs.Add(log);
 
         if (pythonLogsToggle.isOn)
-            DisplayLog(log);
+            ReloadConsole();
     }
 
-    void DisplayLog(Log log, bool stayBottom = true) {
-        if (stayBottom && scrollRect.normalizedPosition.y < 0.01)
-            StartCoroutine(MoveToBottom());
-        
+    void DisplayLog(Log log) {
         var output = Regex.Split(log.text, @"(.{1," + maxCharsInRow + @"})(?:\s|$)|(.{" + maxCharsInRow + @"})")
                   .Where(x => x.Length > 0)
                   .ToList();
@@ -115,12 +115,10 @@ public class PyConsole : MonoBehaviour {
         }
     }
 
-    // doit reload
-    // join unity logs, expressions & python logs
-    // order by time
-    // foreach DisplayLog(log, false)
-
     void ReloadConsole() {
+        if (scrollRect.normalizedPosition.y < 0.01)
+            StartCoroutine(MoveToBottom());
+
         consoleText.text = "";
 
         List<Log> logs = new List<Log>();
@@ -132,8 +130,9 @@ public class PyConsole : MonoBehaviour {
             logs.AddRange(expressionLogs);
 
         var orderedLogs = logs.OrderBy(x => x.time).ToList();
+        orderedLogs = orderedLogs.TakeLast(maxLogsInConsole).ToList();
         foreach (var log in orderedLogs) {
-            DisplayLog(log, false);
+            DisplayLog(log);
         }
     }
 
