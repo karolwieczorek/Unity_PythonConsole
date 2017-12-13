@@ -6,8 +6,7 @@ using UnityEngine.UI;
 using System;
 
 namespace UnityPython.Assets.Examples {
-    // doit rename to PythonManager
-    public class PythonScriptTest : MonoBehaviour {
+    public class PythonManager : MonoBehaviour {
         [SerializeField] PyConsole pyConsole;
 
         Microsoft.Scripting.Hosting.ScriptEngine engine;
@@ -15,7 +14,7 @@ namespace UnityPython.Assets.Examples {
 
         string pythonScript;
         private void Awake() {
-            pythonScript = GetText();
+            StartCoroutine(GetPythonScript());
             pyConsole.SetExecuteAction(ExecuteInputCommand);
         }
 
@@ -27,22 +26,14 @@ namespace UnityPython.Assets.Examples {
             engine = Python.CreateEngine();
             engine.Runtime.LoadAssembly(typeof(GameObject).Assembly);
 
-            engine.Runtime.LoadAssembly(typeof(Image).Assembly);
-            //engine.ImportModule("");
             scope = engine.CreateScope();
             scope.SetVariable("pyConsole", pyConsole);
             engine.Execute(pythonScript, scope);
-            //var scope = engine.ExecuteFile(path);
-            int counter = scope.GetVariable<int>("counter");
-            Debug.Log(counter);
-
-            float timeBackup = scope.GetVariable<float>("timeBackup");
-            Debug.Log(timeBackup);
 
             Debug.LogError("Error test");
 
             Debug.LogWarning("warning\nTest");
-
+            
             //TestInstance();
             //TestInstance();
 
@@ -82,11 +73,6 @@ class PyClass:
             Debug.Log(py.CallFunction("isodd", 6));
         }
 
-        string GetText() {
-            string filePath = System.IO.Path.Combine(Application.streamingAssetsPath, "python.py");
-            return System.IO.File.ReadAllText(filePath);
-        }
-
 #region Web GetText
         // doit use with web
         IEnumerator GetPythonScript() {
@@ -94,9 +80,9 @@ class PyClass:
 
             string result;
             if (filePath.Contains("://") || filePath.Contains(":///")) {
-                WWW www = new WWW(filePath);
-                yield return www;
-                result = www.text;
+                UnityEngine.Networking.UnityWebRequest www = UnityEngine.Networking.UnityWebRequest.Get(filePath);
+                yield return www.SendWebRequest();
+                result = www.downloadHandler.text;
             } else
                 result = System.IO.File.ReadAllText(filePath);
 

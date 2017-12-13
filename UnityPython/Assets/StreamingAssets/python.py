@@ -18,6 +18,7 @@ class PyClass:
 
 
 # print hooks
+# source: https://stackoverflow.com/questions/8288717/python-print-passing-extra-text-to-sys-stdout
 import sys
 
 class StdOutHook:
