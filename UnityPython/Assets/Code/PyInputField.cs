@@ -18,8 +18,7 @@ namespace UnityPythonConsole.Assets.Code {
         }
 
         private void InputValueChanged(string arg0) {
-            //if (arg0 != "")
-            //    Debug.Log(arg0);
+            // doit alternative place to reset log history index (look on Update -> GetKeyDown(UpArrow))
         }
 
         internal void Init(PyConsole pyConsole) {
@@ -38,8 +37,6 @@ namespace UnityPythonConsole.Assets.Code {
             var text = inputField.text;
             if (string.IsNullOrEmpty(text))
                 return;
-            //if (text.EndsWith("\n"))
-            //    text = text.Remove(text.Length - 2, 2);
 
             pyConsole.AddExpressionLog(text);
 
@@ -50,13 +47,19 @@ namespace UnityPythonConsole.Assets.Code {
 
         private void Update() {
             if (inputField.isFocused) {
-                if (Input.GetKeyDown(KeyCode.Return) && Input.GetKey(KeyCode.LeftShift) == false) {
+                if ((Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter)) 
+                    && Input.GetKey(KeyCode.LeftShift) == false) 
+                {
                     ExecuteInputCommand();
                 }
-
-                if (inputField.text == "" && Input.GetKeyDown(KeyCode.UpArrow)) {
-                    inputField.text = pyConsole.GetPrevCommand();
-                    inputField.MoveTextEnd(true);
+                
+                if (Input.anyKeyDown || Input.anyKey) {
+                    if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.UpArrow)) {
+                        inputField.text = pyConsole.GetPrevCommand(); // create and use log history index
+                        inputField.MoveTextEnd(true);
+                    } else {
+                        // doit reset log history index
+                    }
                 }
             }
         }

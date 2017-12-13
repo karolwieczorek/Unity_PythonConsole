@@ -2,19 +2,6 @@
 from UnityEngine import *
 
 Debug.Log("Hello From IronPython")
-counter = 25 + 11
-timeBackup = Time.deltaTime;
-
-
-class PyClass:
-    def __init__(self):
-        pass
-
-    def somemethod(self):
-        return 'in some method'
-
-    def isodd(self, n):
-        return 1 == n % 2
 
 
 # print hooks
@@ -37,50 +24,3 @@ class StdErrHook:
 
 
 sys.stderr = StdErrHook()
-
-
-print "Hello, World!"
-
-
-
-triangle = GameObject.Find("Triangle")
-moveSpeed = 1
-
-def Movement(*args):
-    if Input.GetKey(KeyCode.LeftArrow):
-        triangle.transform.position += Vector3.left * Time.deltaTime * moveSpeed
-
-    if Input.GetKey(KeyCode.RightArrow):
-        triangle.transform.position += Vector3.right * Time.deltaTime * moveSpeed
-
-
-unityEvents.update += Movement
-
-
-circle = GameObject.Find("Circle")
-circles = [circle]
-ballSpeed = 5
-ballCurrentSpeed = 0.1
-
-def Projectile(*args):
-    if ballCurrentSpeed > 0:
-        for circle in circles:
-            circle.transform.position += Vector3(0, Time.deltaTime * ballCurrentSpeed, 0)
-            global ballCurrentSpeed
-        #ballCurrentSpeed -= .1
-
-unityEvents.update += Projectile
-
-def Shoot(*args):
-    if Input.GetKeyDown(KeyCode.X):
-        newCircle = unityEvents.Instantiate(circle)
-        newCircle.transform.position = triangle.transform.position + Vector3.up
-        circles.append(newCircle)
-        global ballCurrentSpeed
-        ballCurrentSpeed = ballSpeed
-        newCircle.GetComponent("SpriteRenderer").color = Random.ColorHSV()
-
-unityEvents.update += Shoot
-
-def NewBall(*args):
-    unityEvents.Instantiate(circle)
