@@ -24,3 +24,7 @@ class StdErrHook:
 
 
 sys.stderr = StdErrHook()
+
+
+def GetRootObjects():
+    return UnityEngine.SceneManagement.SceneManager.GetActiveScene().GetRootGameObjects()
