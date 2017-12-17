@@ -11,6 +11,11 @@ https://github.com/exodrifter/unity-python
 
 ![Gif](https://i.imgur.com/sd0Sk29.gif)
 
+[![UnityPythonConsoleYT](https://img.youtube.com/vi/LddQ9T-ADec/0.jpg)](https://www.youtube.com/watch?v=LddQ9T-ADec)
+
+## Usage and examples
+https://karolwieczorek.github.io/Projects/PythonConsole/help
+
 ## Running
 
 Required Unity 2017.2
